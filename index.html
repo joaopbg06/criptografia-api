@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumir API de Criptografia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Criptografia de Mensagens</h1>
+
+        <div>
+            <h2>Criptografar Mensagem</h2>
+            <textarea id="message-to-encrypt" rows="4" placeholder="Digite sua mensagem aqui..."></textarea>
+            <button id="encrypt-button">Criptografar</button>
+        </div>
+
+        <div class="result-section" id="encryption-result"></div>
+
+        <div>
+            <h2>Descriptografar Mensagem</h2>
+            <textarea id="encrypted-data" rows="4" placeholder="Cole os dados criptografados aqui..."></textarea>
+            <button id="decrypt-button">Descriptografar</button>
+        </div>
+
+        <div class="result-section" id="decryption-result"></div>
+    </div>
+
+    <script>
+        const apiKey = '1234567890abcdef';
+
+        function encryptMessage(message) {
+            fetch('https://42dac5c7-51ad-4828-aa28-f08c14ee809c-00-lmf1h2h189o1.picard.replit.dev/encrypt', {  // URL do Replit ou localhost
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey  // Enviando o cabeçalho corretamente
+                },
+                body: JSON.stringify({ message })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao criptografar a mensagem: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const resultDiv = document.getElementById('encryption-result');
+                    resultDiv.innerHTML = `<h3>Mensagem Criptografada:</h3>
+                                <p><strong>Dados Criptografados:</strong> ${data.encrypted.encryptedData}</p>`;
+                })
+                .catch(error => alert(error.message));
+        }
+
+        function decryptMessage(encryptedData) {
+            fetch('https://42dac5c7-51ad-4828-aa28-f08c14ee809c-00-lmf1h2h189o1.picard.replit.dev/decrypt', {  // URL do Replit ou localhost
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey  // Enviando o cabeçalho corretamente
+                },
+                body: JSON.stringify({ encryptedData })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao descriptografar a mensagem: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const resultDiv = document.getElementById('decryption-result');
+                    resultDiv.innerHTML = `<h3>Mensagem Descriptografada:</h3>
+                                <p>${data.decrypted}</p>`;
+                })
+                .catch(error => alert(error.message));
+        }
+
+
+
+        // Criptografar Mensagem
+        document.getElementById('encrypt-button').addEventListener('click', () => {
+            const message = document.getElementById('message-to-encrypt').value;
+            encryptMessage(message);
+        });
+
+        // Descriptografar Mensagem
+        document.getElementById('decrypt-button').addEventListener('click', () => {
+            const encryptedData = document.getElementById('encrypted-data').value;
+            decryptMessage(encryptedData);
+        });
+
+
+    </script>
+</body>
+
+</html>
